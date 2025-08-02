@@ -8,16 +8,24 @@ from pydantic import BaseModel
 from huggingface_hub import login
 import os
 
-tokenizer = tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
-session = onnxruntime.InferenceSession("roberta-sequence-classification-9.onnx")
+# tokenizer = tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
+# session = onnxruntime.InferenceSession("roberta-sequence-classification-9.onnx")
 
 
 login(token=os.getenv("HUGGINGFACE_HUB_TOKEN"))
-pipe = pipeline(
-    "image-text-to-text",
-    model="google/gemma-3n-e2b-it",
-    device="cuda",
-    torch_dtype=torch.bfloat16,
+# pipe = pipeline(
+#     "image-text-to-text",
+#     model="google/gemma-3n-e2b-it",
+#     device="cuda",
+#     torch_dtype=torch.bfloat16,
+# )
+model_name_or_path = "Qwen/Qwen3-8B"
+
+generator = pipeline(
+    "text-generation", 
+    model_name_or_path, 
+    torch_dtype="auto", 
+    device_map="auto",
 )
 
 
@@ -69,5 +77,5 @@ def generate(body: Body):
         ]
     }
     ]
-    output = pipe(text=messages, max_new_tokens=200)
+    output = generator(text=messages, max_new_tokens=200)
     return {"generated_text": output[0]["generated_text"][-1]["content"]}

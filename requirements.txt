@@ -4,3 +4,4 @@ onnxruntime
 torch
 transformers
 huggingface-hub
+accelerate
